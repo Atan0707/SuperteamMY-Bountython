@@ -27,7 +27,6 @@ interface Gallery6Props {
 
 const Gallery6 = ({
   heading = "Gallery",
-  demoUrl = "https://www.shadcnblocks.com",
   items = [
     {
       id: "item-1",
@@ -89,20 +88,20 @@ const Gallery6 = ({
     };
   }, [carouselApi]);
   return (
-    <section className="py-32">
+    <section className="py-12 text-white">
       <div className="container">
         <div className="mb-8 flex flex-col justify-between md:mb-14 md:flex-row md:items-end lg:mb-16">
           <div>
-            <h2 className="mb-3 text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6">
+            <h2 className="mb-3 text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6 text-white">
               {heading}
             </h2>
-            <a
-              href={demoUrl}
-              className="group flex items-center gap-1 text-sm font-medium md:text-base lg:text-lg"
+            {/* <a
+              href="/create"
+              className="group flex items-center gap-1 text-sm font-medium md:text-base lg:text-lg text-purple-300 hover:text-purple-200"
             >
-              Book a demo
+              Mint more NFTs
               <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </a>
+            </a> */}
           </div>
           <div className="mt-8 flex shrink-0 items-center justify-start gap-2">
             <Button
@@ -112,7 +111,7 @@ const Gallery6 = ({
                 carouselApi?.scrollPrev();
               }}
               disabled={!canScrollPrev}
-              className="disabled:pointer-events-auto"
+              className="disabled:pointer-events-auto bg-purple-800 border-purple-600 hover:bg-purple-700 text-white"
             >
               <ArrowLeft className="size-5" />
             </Button>
@@ -123,7 +122,7 @@ const Gallery6 = ({
                 carouselApi?.scrollNext();
               }}
               disabled={!canScrollNext}
-              className="disabled:pointer-events-auto"
+              className="disabled:pointer-events-auto bg-purple-800 border-purple-600 hover:bg-purple-700 text-white"
             >
               <ArrowRight className="size-5" />
             </Button>
@@ -147,29 +146,35 @@ const Gallery6 = ({
               <CarouselItem key={item.id} className="pl-4 md:max-w-[452px]">
                 <a
                   href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex aspect-[3/2] overflow-clip rounded-xl">
-                      <div className="flex-1">
+                    <div className="flex aspect-[3/2] overflow-clip rounded-xl border border-purple-500">
+                      <div className="flex-1 bg-black/30">
                         <div className="relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105">
                           <img
                             src={item.image}
                             alt={item.title}
                             className="h-full w-full object-cover object-center"
+                            onError={(e) => {
+                              // If image fails to load, replace with placeholder
+                              (e.target as HTMLImageElement).src = "https://placehold.co/300x300?text=No+Image";
+                            }}
                           />
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl">
+                  <div className="mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl text-white">
                     {item.title}
                   </div>
-                  <div className="mb-8 line-clamp-2 text-sm text-muted-foreground md:mb-12 md:text-base lg:mb-9">
+                  <div className="mb-8 line-clamp-2 text-sm text-gray-300 md:mb-12 md:text-base lg:mb-9">
                     {item.summary}
                   </div>
-                  <div className="flex items-center text-sm">
-                    Read more{" "}
+                  <div className="flex items-center text-sm text-purple-300 group-hover:text-purple-200">
+                    View on Explorer{" "}
                     <ArrowRight className="ml-2 size-5 transition-transform group-hover:translate-x-1" />
                   </div>
                 </a>
