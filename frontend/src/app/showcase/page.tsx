@@ -118,14 +118,11 @@ const Showcase = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
-        <div className="container mx-auto p-6">
-          <div className="flex justify-between items-center mb-8 pt-6">
-            <h1 className="text-3xl font-bold text-white">NFT Marketplace</h1>
-            <div className="flex gap-4">
-              <WalletMultiButton />
-              <Link href="/portfolio" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
-                My Portfolio
-              </Link>
+        <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-6">
+          <div className="flex flex-row justify-between items-center mb-8 pt-4 sm:pt-6 gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Showcase</h1>
+            <div>
+              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-2 !px-4 !text-sm !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
             </div>
           </div>
 
@@ -133,12 +130,13 @@ const Showcase = () => {
             <div className="mb-8">
               <h2 className="text-2xl font-semibold mb-2">Available NFTs for Purchase</h2>
               <p className="text-gray-300">Browse and buy unique NFTs listed by other creators</p>
+              {/* <p className="text-gray-300">Some hidden gems might be here 👀</p> */}
             </div>
 
             {loading ? (
               <div className="text-center py-20">
                 <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent"></div>
-                <p className="mt-4 text-gray-200">Loading NFT listings...</p>
+                <p className="mt-4 text-gray-200">Loading NFTs...</p>
               </div>
             ) : listings.length === 0 ? (
               <div className="text-center py-20">
@@ -149,13 +147,13 @@ const Showcase = () => {
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
                 {listings.map((listing) => (
                   <div 
                     key={listing.publicKey.toString()} 
-                    className="bg-gray-900/80 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-md hover:shadow-purple-500/20"
+                    className="bg-gray-900/80 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-md hover:shadow-purple-500/20 max-w-full flex flex-col h-full"
                   >
-                    <div className="aspect-square w-full relative overflow-hidden">
+                    <div className="aspect-square w-full relative overflow-hidden flex-shrink-0">
                       {listing.loading ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                           <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
@@ -172,23 +170,25 @@ const Showcase = () => {
                       )}
                     </div>
                     
-                    <div className="p-3">
-                      <h3 className="text-base font-bold mb-1 truncate">{listing.account.nftName}</h3>
+                    <div className="p-3 flex flex-col flex-grow">
+                      <h3 className="text-base font-bold mb-1 truncate w-full">{listing.account.nftName}</h3>
                       
                       <div className="flex items-center gap-1 mb-2 text-xs text-gray-300">
                         <Tag className="h-3 w-3 text-purple-400" />
                         <span>{listing.account.nftSymbol || 'NFT'}</span>
                       </div>
                       
-                      {listing.metadata?.description && (
-                        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
+                      {listing.metadata?.description ? (
+                        <p className="text-gray-300 text-xs mb-2 line-clamp-2 min-h-[2rem]">
                           {listing.metadata.description}
                         </p>
+                      ) : (
+                        <div className="min-h-[2rem]"></div>
                       )}
                       
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center text-purple-300">
-                          <User className="h-3 w-3 mr-1" />
+                      <div className="flex items-center justify-between mb-3 mt-auto">
+                        <div className="flex items-center text-purple-300 max-w-[50%]">
+                          <User className="h-3 w-3 mr-1 flex-shrink-0" />
                           <a 
                             href={`https://explorer.solana.com/address/${listing.account.seller.toString()}?cluster=devnet`}
                             target="_blank"
@@ -199,9 +199,9 @@ const Showcase = () => {
                           </a>
                         </div>
                         
-                        <div className="flex items-center bg-purple-500/20 px-2 py-0.5 rounded-full">
-                          <DollarSign className="h-3 w-3 mr-1 text-purple-300" />
-                          <span className="text-xs font-semibold text-white">
+                        <div className="flex items-center bg-purple-500/20 px-2 py-0.5 rounded-full max-w-[50%]">
+                          <DollarSign className="h-3 w-3 mr-1 text-purple-300 flex-shrink-0" />
+                          <span className="text-xs font-semibold text-white truncate">
                             {formatPrice(parseInt(listing.account.price.toString()))} SOL
                           </span>
                         </div>
@@ -210,7 +210,7 @@ const Showcase = () => {
                       <Button 
                         onClick={() => handleBuyNft(listing)}
                         disabled={!connected}
-                        className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs"
+                        className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs mt-auto"
                       >
                         <ShoppingCart className="mr-1 h-3 w-3" />
                         Buy Now
