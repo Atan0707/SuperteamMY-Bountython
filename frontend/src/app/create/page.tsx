@@ -181,7 +181,7 @@ const NFTCreator = () => {
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
         <div className="container mx-auto p-4 md:p-6 pb-24">
           <div className="flex justify-between items-center mb-6 md:mb-8 pt-4 md:pt-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Create Your NFT</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Create NFT</h1>
             <div>
               <WalletMultiButton />
               {/* <Link href="/portfolio" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">

@@ -141,7 +141,7 @@ const Portfolio = () => {
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
         <div className="container mx-auto p-4 md:p-6 pb-24">
           <div className="flex justify-between items-center mb-6 md:mb-8 pt-4 md:pt-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-white">My NFT Portfolio</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Portfolio</h1>
             <div>
               <WalletMultiButton />
             </div>
