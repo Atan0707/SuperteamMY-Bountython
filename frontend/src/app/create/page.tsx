@@ -13,6 +13,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Button } from '@/components/ui/button';
 import { Upload, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 const NFTCreator = () => {
   const [loading, setLoading] = useState(false);
@@ -176,140 +177,142 @@ const NFTCreator = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
-      <div className="w-full max-w-2xl bg-white/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden">
-        <div className="p-6 sm:p-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Create Your NFT</h1>
+    <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
+      <div className="min-h-screen bg-black/60 backdrop-blur-sm">
+        <div className="container mx-auto p-6">
+          <div className="flex justify-between items-center mb-8 pt-6">
+            <h1 className="text-3xl font-bold text-white">Create Your NFT</h1>
             <div className="flex gap-4">
               <WalletMultiButton />
-              {/* <Link href="/test/view" passHref>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <FileImage className="h-4 w-4" />
-                  View My NFTs
-                </Button>
-              </Link> */}
+              <Link href="/portfolio" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
+                My Portfolio
+              </Link>
+              <Link href="/showcase" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
+                NFT Marketplace
+              </Link>
             </div>
           </div>
           
-          {connected ? (
-            <form onSubmit={mintNFT} className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    NFT Name
-                  </label>
-                  <input
-                    type="text"
-                    value={nftName}
-                    onChange={(e) => setNftName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Enter a name for your NFT"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description (Optional)
-                  </label>
-                  <textarea
-                    value={nftDescription}
-                    onChange={(e) => setNftDescription(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Enter a description for your NFT"
-                    rows={3}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Upload Image
-                  </label>
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-                  >
-                    {previewUrl ? (
-                      <div className="space-y-4 w-full">
-                        <div className="mx-auto max-w-xs overflow-hidden rounded-lg">
-                          <img 
-                            src={previewUrl} 
-                            alt="Preview" 
-                            className="w-full h-auto object-contain"
-                          />
-                        </div>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="mx-auto"
-                        >
-                          Change Image
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <Upload className="h-12 w-12 text-gray-400 mb-2" />
-                        <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-                        <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
-                      </>
-                    )}
+          <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white">
+            {connected ? (
+              <form onSubmit={mintNFT} className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">
+                      NFT Name
+                    </label>
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      ref={fileInputRef}
+                      type="text"
+                      value={nftName}
+                      onChange={(e) => setNftName(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-900/80 border border-purple-500/40 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white"
+                      placeholder="Enter a name for your NFT"
                       required
                     />
                   </div>
-                </div>
-              </div>
-              
-              {mintStatus && (
-                <div className={`p-4 rounded-md ${
-                  mintStatus.includes('Error') 
-                    ? 'bg-red-50 text-red-800' 
-                    : mintStatus.includes('Success') 
-                      ? 'bg-green-50 text-green-800'
-                      : 'bg-blue-50 text-blue-800'
-                }`}>
-                  <p className="text-sm">{mintStatus}</p>
-                  {nftUrl && (
-                    <a 
-                      href={nftUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-purple-600 hover:text-purple-800 font-medium text-sm mt-2 inline-block"
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">
+                      Description (Optional)
+                    </label>
+                    <textarea
+                      value={nftDescription}
+                      onChange={(e) => setNftDescription(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-900/80 border border-purple-500/40 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white"
+                      placeholder="Enter a description for your NFT"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">
+                      Upload Image
+                    </label>
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="border-2 border-dashed border-purple-500/40 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-900/40 transition-colors"
                     >
-                      View on Solana Explorer
-                    </a>
-                  )}
+                      {previewUrl ? (
+                        <div className="space-y-4 w-full">
+                          <div className="mx-auto max-w-xs overflow-hidden rounded-lg border border-purple-500/40">
+                            <img 
+                              src={previewUrl} 
+                              alt="Preview" 
+                              className="w-full h-auto object-contain"
+                            />
+                          </div>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            className="mx-auto border-purple-500 text-purple-300 hover:bg-purple-900/30"
+                          >
+                            Change Image
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="h-12 w-12 text-purple-400 mb-2" />
+                          <p className="text-sm text-gray-300">Click to upload or drag and drop</p>
+                          <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 10MB</p>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        ref={fileInputRef}
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
-              )}
-              
-              <Button
-                type="submit"
-                disabled={loading || !connected}
-                className="w-full py-2.5"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                    {mintStatus || 'Processing...'}
-                  </span>
-                ) : (
-                  'Create NFT'
+                
+                {mintStatus && (
+                  <div className={`p-4 rounded-md ${
+                    mintStatus.includes('Error') 
+                      ? 'bg-red-900/30 text-red-300 border border-red-600/40' 
+                      : mintStatus.includes('Success') 
+                        ? 'bg-green-900/30 text-green-300 border border-green-600/40'
+                        : 'bg-blue-900/30 text-blue-300 border border-blue-600/40'
+                  }`}>
+                    <p className="text-sm">{mintStatus}</p>
+                    {nftUrl && (
+                      <a 
+                        href={nftUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-300 hover:text-purple-200 font-medium text-sm mt-2 inline-block"
+                      >
+                        View on Solana Explorer
+                      </a>
+                    )}
+                  </div>
                 )}
-              </Button>
-            </form>
-          ) : (
-            <div className="text-center py-12">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Connect Your Wallet</h2>
-              <p className="text-gray-600 mb-6">Connect your wallet to create an amazing NFT</p>
-              <WalletMultiButton />
-            </div>
-          )}
+                
+                <Button
+                  type="submit"
+                  disabled={loading || !connected}
+                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center">
+                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                      {mintStatus || 'Processing...'}
+                    </span>
+                  ) : (
+                    'Create NFT'
+                  )}
+                </Button>
+              </form>
+            ) : (
+              <div className="text-center py-20">
+                <h2 className="text-2xl font-semibold mb-4 text-white">Connect Your Wallet</h2>
+                <p className="text-gray-300 mb-6">Connect your wallet to create an amazing NFT</p>
+                <WalletMultiButton />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
