@@ -44,6 +44,10 @@ interface GalleryItem {
   summary: string;
   url: string;
   image: string;
+  address: string;
+  symbol: string;
+  uri: string;
+  metadata: NFTMetadata;
 }
 
 const Portfolio = () => {
@@ -111,13 +115,17 @@ const Portfolio = () => {
       
       setNfts(nftsWithMetadata);
       
-      // Transform NFTs into carousel items
+      // Updated transformation to include all necessary NFT data for listing
       const items: GalleryItem[] = nftsWithMetadata.map((nft) => ({
         id: nft.address,
         title: nft.name,
         summary: nft.metadata?.description || `NFT ${nft.symbol || ''}`,
         url: `https://explorer.solana.com/address/${nft.address}?cluster=devnet`,
-        image: nft.image || "https://placehold.co/300x300?text=No+Image"
+        image: nft.image || "https://placehold.co/300x300?text=No+Image",
+        address: nft.address,
+        symbol: nft.symbol,
+        uri: nft.uri,
+        metadata: nft.metadata
       }));
       
       setCarouselItems(items);
@@ -136,11 +144,10 @@ const Portfolio = () => {
             <h1 className="text-3xl font-bold text-white">My NFT Portfolio</h1>
             <div className="flex gap-4">
               <WalletMultiButton />
-              {/* <Link href="/test" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
-                Mint New NFT
-              </Link> */}
+              <Link href="/showcase" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
+                NFT Marketplace
+              </Link>
             </div>
-
           </div>
 
           {!connected ? (
@@ -169,6 +176,7 @@ const Portfolio = () => {
                   heading="My NFT Collection"
                   demoUrl="/test"
                   items={carouselItems}
+                  showListButton={true}
                 />
               )}
             </div>

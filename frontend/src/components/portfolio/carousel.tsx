@@ -6,12 +6,17 @@ interface GalleryItem {
   summary: string;
   url: string;
   image: string;
+  address?: string;
+  symbol?: string;
+  uri?: string;
+  metadata?: any;
 }
 
 interface CarouselProps {
   heading: string;
   demoUrl: string;
   items: GalleryItem[];
+  showListButton?: boolean;
 }
 
 const defaultCarouselData = {
@@ -64,12 +69,14 @@ const defaultCarouselData = {
 function Carousel({ 
   heading = defaultCarouselData.heading, 
   demoUrl = defaultCarouselData.demoUrl, 
-  items = defaultCarouselData.items 
+  items = defaultCarouselData.items,
+  showListButton = false
 }: Partial<CarouselProps>) {
   return <Gallery6 
     heading={heading} 
     demoUrl={demoUrl} 
     items={items} 
+    showListButton={showListButton}
   />;
 }
 

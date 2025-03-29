@@ -10,6 +10,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { ListNftButton } from "@/components/listing/ListNftButton";
 
 interface GalleryItem {
   id: string;
@@ -17,12 +18,17 @@ interface GalleryItem {
   summary: string;
   url: string;
   image: string;
+  uri?: string;
+  symbol?: string;
+  address?: string;
+  metadata?: any;
 }
 
 interface Gallery6Props {
   heading?: string;
   demoUrl?: string;
   items?: GalleryItem[];
+  showListButton?: boolean;
 }
 
 const Gallery6 = ({
@@ -69,6 +75,7 @@ const Gallery6 = ({
       image: "/images/block/placeholder-dark-1.svg",
     },
   ],
+  showListButton = false,
 }: Gallery6Props) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -144,40 +151,54 @@ const Gallery6 = ({
           <CarouselContent className="-mr-4 ml-8 2xl:ml-[max(8rem,calc(50vw-700px+1rem))] 2xl:mr-[max(0rem,calc(50vw-700px-1rem))]">
             {items.map((item) => (
               <CarouselItem key={item.id} className="pl-4 md:max-w-[452px]">
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex aspect-[3/2] overflow-clip rounded-xl border border-purple-500">
-                      <div className="flex-1 bg-black/30">
-                        <div className="relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105">
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="h-full w-full object-cover object-center"
-                            onError={(e) => {
-                              // If image fails to load, replace with placeholder
-                              (e.target as HTMLImageElement).src = "https://placehold.co/300x300?text=No+Image";
-                            }}
-                          />
+                <div className="group flex flex-col justify-between">
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div>
+                      <div className="flex aspect-[3/2] overflow-clip rounded-xl border border-purple-500">
+                        <div className="flex-1 bg-black/30">
+                          <div className="relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105">
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              className="h-full w-full object-cover object-center"
+                              onError={(e) => {
+                                // If image fails to load, replace with placeholder
+                                (e.target as HTMLImageElement).src = "https://placehold.co/300x300?text=No+Image";
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl text-white">
-                    {item.title}
-                  </div>
-                  <div className="mb-8 line-clamp-2 text-sm text-gray-300 md:mb-12 md:text-base lg:mb-9">
-                    {item.summary}
-                  </div>
-                  <div className="flex items-center text-sm text-purple-300 group-hover:text-purple-200">
-                    View on Explorer{" "}
-                    <ArrowRight className="ml-2 size-5 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </a>
+                    <div className="mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl text-white">
+                      {item.title}
+                    </div>
+                    <div className="mb-3 line-clamp-2 text-sm text-gray-300 md:mb-3 md:text-base">
+                      {item.summary}
+                    </div>
+                    <div className="flex items-center text-sm text-purple-300 group-hover:text-purple-200">
+                      View on Explorer{" "}
+                      <ArrowRight className="ml-2 size-5 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </a>
+                  
+                  {showListButton && item.address && (
+                    <ListNftButton 
+                      nft={{
+                        address: item.address,
+                        name: item.title,
+                        symbol: item.symbol,
+                        uri: item.uri || '',
+                        image: item.image,
+                        metadata: item.metadata
+                      }} 
+                    />
+                  )}
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
