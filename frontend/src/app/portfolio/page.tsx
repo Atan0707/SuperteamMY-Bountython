@@ -140,6 +140,7 @@ const Portfolio = () => {
                 Mint New NFT
               </Link> */}
             </div>
+
           </div>
 
           {!connected ? (

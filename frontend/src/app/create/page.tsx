@@ -11,9 +11,8 @@ import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import { PinataSDK } from "pinata";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Upload, FileImage, Loader2 } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
 
 const NFTCreator = () => {
   const [loading, setLoading] = useState(false);
