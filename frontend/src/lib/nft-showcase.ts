@@ -277,7 +277,11 @@ export async function getAllListings(connection: Connection) {
   }
 }
 
-// Helper function to format price from lamports to SOL
-export function formatPrice(lamports: number): string {
-  return (lamports / 1_000_000_000).toFixed(2);
+// Format price from lamports to SOL with proper formatting
+export function formatPrice(lamports: string | number): string {
+  const sol = Number(lamports) / 1_000_000_000;
+  return sol.toLocaleString(undefined, { 
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 9 
+  });
 } 

@@ -8,10 +8,10 @@ import { mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import { publicKey } from '@metaplex-foundation/umi';
 import { fetchAllDigitalAssetWithTokenByOwner } from '@metaplex-foundation/mpl-token-metadata';
 import Link from 'next/link';
-import { Carousel } from '@/components/portfolio/carousel';
 import { useQuery } from '@tanstack/react-query';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Tag, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ShowcasedNfts } from '@/components/portfolio/ShowcasedNfts';
 
 // Interface for the asset data structure that Metaplex returns
 interface DigitalAsset {
@@ -40,38 +40,21 @@ type NFT = {
   metadata?: NFTMetadata;
 };
 
-interface GalleryItem {
-  id: string;
-  title: string;
-  summary: string;
-  url: string;
-  image: string;
-  address: string;
-  symbol?: string;
-  uri: string;
-  metadata: NFTMetadata;
-}
-
-interface QueryResult {
-  nfts: NFT[];
-  carouselItems: GalleryItem[];
-}
-
 const Portfolio = () => {
   const { publicKey: walletPublicKey, connected } = useWallet();
   const wallet = useWallet();
 
   // Use React Query to fetch and cache NFTs
   const { 
-    data, 
+    data: nfts = [], 
     isLoading, 
     isError, 
     refetch 
-  } = useQuery<QueryResult>({
+  } = useQuery({
     queryKey: ['nfts', walletPublicKey?.toString()],
     queryFn: async () => {
       if (!walletPublicKey) {
-        return { nfts: [], carouselItems: [] };
+        return [];
       }
       
       try {
@@ -113,20 +96,7 @@ const Portfolio = () => {
           })
         );
         
-        // Transform NFTs into gallery items
-        const items: GalleryItem[] = nftsWithMetadata.map((nft) => ({
-          id: nft.address,
-          title: nft.name,
-          summary: nft.metadata?.description || `NFT ${nft.symbol || ''}`,
-          url: `https://explorer.solana.com/address/${nft.address}?cluster=devnet`,
-          image: nft.image || "https://placehold.co/300x300?text=No+Image",
-          address: nft.address,
-          symbol: nft.symbol,
-          uri: nft.uri,
-          metadata: nft.metadata as NFTMetadata
-        }));
-        
-        return { nfts: nftsWithMetadata, carouselItems: items };
+        return nftsWithMetadata;
       } catch (error) {
         console.error('Error fetching NFTs:', error);
         throw error;
@@ -136,10 +106,6 @@ const Portfolio = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false
   });
-  
-  // Extract data with default values
-  const nfts = data?.nfts || [];
-  const carouselItems = data?.carouselItems || [];
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
@@ -185,7 +151,10 @@ const Portfolio = () => {
           ) : (
             <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 md:p-6 text-white mb-16">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl md:text-2xl font-semibold">My NFT Collection</h2>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-semibold">My NFT Collection</h2>
+                  <p className="text-gray-300 text-sm">Browse your owned NFTs</p>
+                </div>
                 <Button 
                   onClick={() => refetch()} 
                   variant="outline" 
@@ -195,16 +164,60 @@ const Portfolio = () => {
                   <RefreshCw className="h-4 w-4 mr-2" /> Refresh
                 </Button>
               </div>
-              {carouselItems.length > 0 && (
-                <Carousel
-                  heading=""
-                  demoUrl="/create"
-                  items={carouselItems}
-                  showListButton={true}
-                />
-              )}
+              
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
+                {nfts.map((nft) => (
+                  <div 
+                    key={nft.address} 
+                    className="bg-gray-900/80 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-md hover:shadow-purple-500/20 max-w-full flex flex-col h-full"
+                  >
+                    <div className="aspect-square w-full relative overflow-hidden flex-shrink-0">
+                      <img 
+                        src={nft.image || "https://placehold.co/400x400?text=No+Image"} 
+                        alt={nft.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://placehold.co/400x400?text=No+Image";
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="p-3 flex flex-col flex-grow">
+                      <h3 className="text-base font-bold mb-1 truncate w-full">{nft.name}</h3>
+                      
+                      <div className="flex items-center gap-1 mb-2 text-xs text-gray-300">
+                        <Tag className="h-3 w-3 text-purple-400" />
+                        <span>{nft.symbol || 'NFT'}</span>
+                      </div>
+                      
+                      {nft.metadata?.description ? (
+                        <p className="text-gray-300 text-xs mb-2 line-clamp-2 min-h-[2rem]">
+                          {nft.metadata.description}
+                        </p>
+                      ) : (
+                        <div className="min-h-[2rem]"></div>
+                      )}
+                      
+                      <div className="mt-auto">
+                        <a 
+                          href={`https://explorer.solana.com/address/${nft.address}?cluster=devnet`}
+                          target="_blank"
+                          rel="noopener noreferrer" 
+                          className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center"
+                        >
+                          <ExternalLink className="mr-1 h-3 w-3" />
+                          View Details
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+
+          {/* Add the ShowcasedNfts component only if the user is connected */}
+          {connected && <ShowcasedNfts />}
         </div>
       </div>
     </div>

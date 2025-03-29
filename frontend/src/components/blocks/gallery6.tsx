@@ -1,7 +1,10 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useConnection } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
+import idl from '@/idl/nft_showcase.json';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -80,6 +83,55 @@ const Gallery6 = ({
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [listedNfts, setListedNfts] = useState<Record<string, boolean>>({});
+  const { connection } = useConnection();
+
+  // Check if any NFTs are currently listed
+  useEffect(() => {
+    async function checkListedNfts() {
+      if (!connection || !items || items.length === 0) return;
+      
+      try {
+        // Get program ID from the IDL
+        const programId = new PublicKey(idl.address);
+        
+        // Create a record of NFT listing status
+        const listingStatus: Record<string, boolean> = {};
+        
+        // Query all listings with getProgramAccounts
+        const accounts = await connection.getProgramAccounts(programId, {
+          filters: [
+            {
+              memcmp: {
+                offset: 8, // Skip discriminator
+                bytes: '1',  // 1 for isActive = true
+              },
+            },
+          ],
+        });
+        
+        // Process each account to get the mint and check if it's active
+        accounts.forEach((account) => {
+          try {
+            // Extract mint address from the account data
+            // Note: This assumes a specific data structure - might need adjusting
+            // based on actual account layout
+            const mintAddress = new PublicKey(account.account.data.slice(32, 64));
+            listingStatus[mintAddress.toString()] = true;
+          } catch (e) {
+            console.error('Error processing account data:', e);
+          }
+        });
+        
+        setListedNfts(listingStatus);
+      } catch (error) {
+        console.error('Error checking for listed NFTs:', error);
+      }
+    }
+    
+    checkListedNfts();
+  }, [connection, items]);
+
   useEffect(() => {
     if (!carouselApi) {
       return;
@@ -170,6 +222,13 @@ const Gallery6 = ({
                                 (e.target as HTMLImageElement).src = "https://placehold.co/300x300?text=No+Image";
                               }}
                             />
+                            
+                            {/* Show Listed tag if NFT is currently listed */}
+                            {item.address && listedNfts[item.address] && (
+                              <div className="absolute top-2 right-2 bg-purple-600/90 text-white text-xs font-medium px-2 py-1 rounded-md flex items-center">
+                                <Tag className="h-3 w-3 mr-1" /> Listed
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
