@@ -78,16 +78,16 @@ export function ListNftButton({ nft }: ListNftButtonProps) {
     <>
       <Button 
         onClick={() => setOpen(true)}
-        className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white"
+        className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center"
         size="sm"
       >
-        List for Sale <ArrowUpRight className="ml-2 h-4 w-4" />
+        Showcase NFT <ArrowUpRight className="ml-1 h-3 w-3" />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px] bg-gray-900 text-white border border-purple-500">
           <DialogHeader>
-            <DialogTitle className="text-xl text-white">List NFT for Sale</DialogTitle>
+            <DialogTitle className="text-xl text-white">Showcase NFT</DialogTitle>
             <DialogDescription className="text-gray-400">
               Enter the price you want to sell your NFT for.
             </DialogDescription>
@@ -149,10 +149,10 @@ export function ListNftButton({ nft }: ListNftButtonProps) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Listing...
+                  Showcasing...
                 </>
               ) : (
-                'List for Sale'
+                'Showcase NFT'
               )}
             </Button>
           </DialogFooter>

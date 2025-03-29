@@ -1,17 +1,14 @@
-'use client';
-
 import React from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { getAllListings, buyNft, WalletAdapter } from '@/lib/nft-showcase';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { NFTGrid, NFTListing, BuyResult } from '@/components/showcase';
-// import { TransactionHistory } from '@/components/showcase';
-
-const Showcase = () => {
+import ShowcaseHeader from './ShowcaseHeader';
+import NFTGrid from './NFTGrid';
+// import TransactionHistory from './TransactionHistory';
+import { NFTListing, BuyResult } from './NFTTypes';
+ 
+const ShowcaseContainer: React.FC = () => {
   const { connection } = useConnection();
   const wallet = useWallet();
   const { connected } = wallet;
@@ -95,29 +92,13 @@ const Showcase = () => {
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
         <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-row justify-between items-center mb-8 pt-4 sm:pt-6 gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Showcase</h1>
-            <div>
-              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-2 !px-4 !text-sm !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
-            </div>
-          </div>
-
+          <ShowcaseHeader 
+            title="Showcase" 
+            description="Browse and buy unique NFTs listed by other creators" 
+            onRefresh={refetch} 
+          />
+          
           <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white">
-            <div className="mb-8 flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-semibold mb-2">Available NFTs for Purchase</h2>
-                <p className="text-gray-300">Browse and buy unique NFTs listed by other creators</p>
-              </div>
-              <Button 
-                onClick={() => refetch()} 
-                variant="outline" 
-                size="sm"
-                className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" /> Refresh
-              </Button>
-            </div>
-            
             <NFTGrid 
               listings={listings}
               isLoading={isLoading}
@@ -129,11 +110,6 @@ const Showcase = () => {
             />
           </div>
           
-          {/* 
-            Transaction history is currently disabled
-            To enable, uncomment the line below and import TransactionHistory 
-            from '@/components/showcase'
-          */}
           {/* <TransactionHistory /> */}
         </div>
       </div>
@@ -141,4 +117,4 @@ const Showcase = () => {
   );
 };
 
-export default Showcase;
+export default ShowcaseContainer; 

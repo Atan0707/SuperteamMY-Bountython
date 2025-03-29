@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { RefreshCw, Tag, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ShowcasedNfts } from '@/components/portfolio/ShowcasedNfts';
+import { ListNftButton } from '@/components/listing/ListNftButton';
 
 // Interface for the asset data structure that Metaplex returns
 interface DigitalAsset {
@@ -203,11 +204,22 @@ const Portfolio = () => {
                           href={`https://explorer.solana.com/address/${nft.address}?cluster=devnet`}
                           target="_blank"
                           rel="noopener noreferrer" 
-                          className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center"
+                          className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center mb-2"
                         >
                           <ExternalLink className="mr-1 h-3 w-3" />
                           View Details
                         </a>
+                        
+                        <ListNftButton 
+                          nft={{
+                            address: nft.address,
+                            name: nft.name,
+                            symbol: nft.symbol,
+                            uri: nft.uri,
+                            image: nft.image,
+                            metadata: nft.metadata
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -217,7 +229,14 @@ const Portfolio = () => {
           )}
 
           {/* Add the ShowcasedNfts component only if the user is connected */}
-          {connected && <ShowcasedNfts />}
+          {connected && (
+            <>
+              <div className="text-center text-gray-300 text-sm mb-8">
+                To showcase your NFTs in the public marketplace, click the <span className="text-purple-400 font-medium">&quot;Showcase NFT&quot;</span> button on any NFT above.
+              </div>
+              <ShowcasedNfts />
+            </>
+          )}
         </div>
       </div>
     </div>
