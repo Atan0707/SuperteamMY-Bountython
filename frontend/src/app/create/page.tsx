@@ -13,7 +13,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Button } from '@/components/ui/button';
 import { Upload, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+// import Link from 'next/link';
 
 const NFTCreator = () => {
   const [loading, setLoading] = useState(false);
@@ -179,24 +179,21 @@ const NFTCreator = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
-        <div className="container mx-auto p-6">
-          <div className="flex justify-between items-center mb-8 pt-6">
-            <h1 className="text-3xl font-bold text-white">Create Your NFT</h1>
-            <div className="flex gap-4">
+        <div className="container mx-auto p-4 md:p-6 pb-24">
+          <div className="flex justify-between items-center mb-6 md:mb-8 pt-4 md:pt-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Create Your NFT</h1>
+            <div>
               <WalletMultiButton />
-              <Link href="/portfolio" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
+              {/* <Link href="/portfolio" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
                 My Portfolio
-              </Link>
-              <Link href="/showcase" className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
-                NFT Marketplace
-              </Link>
+              </Link> */}
             </div>
           </div>
           
-          <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white">
+          <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 md:p-6 text-white mb-16">
             {connected ? (
-              <form onSubmit={mintNFT} className="space-y-6">
-                <div className="space-y-4">
+              <form onSubmit={mintNFT} className="space-y-5 md:space-y-6">
+                <div className="space-y-3 md:space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-200 mb-1">
                       NFT Name
@@ -230,10 +227,10 @@ const NFTCreator = () => {
                     </label>
                     <div 
                       onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-purple-500/40 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-900/40 transition-colors"
+                      className="border-2 border-dashed border-purple-500/40 rounded-lg p-4 md:p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-900/40 transition-colors"
                     >
                       {previewUrl ? (
-                        <div className="space-y-4 w-full">
+                        <div className="space-y-3 md:space-y-4 w-full">
                           <div className="mx-auto max-w-xs overflow-hidden rounded-lg border border-purple-500/40">
                             <img 
                               src={previewUrl} 
@@ -251,9 +248,9 @@ const NFTCreator = () => {
                         </div>
                       ) : (
                         <>
-                          <Upload className="h-12 w-12 text-purple-400 mb-2" />
-                          <p className="text-sm text-gray-300">Click to upload or drag and drop</p>
-                          <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 10MB</p>
+                          <Upload className="h-10 w-10 md:h-12 md:w-12 text-purple-400 mb-2" />
+                          <p className="text-sm text-gray-300 text-center">Click to upload or drag and drop</p>
+                          <p className="text-xs text-gray-400 mt-1 text-center">PNG, JPG, GIF up to 10MB</p>
                         </>
                       )}
                       <input
@@ -269,7 +266,7 @@ const NFTCreator = () => {
                 </div>
                 
                 {mintStatus && (
-                  <div className={`p-4 rounded-md ${
+                  <div className={`p-3 md:p-4 rounded-md ${
                     mintStatus.includes('Error') 
                       ? 'bg-red-900/30 text-red-300 border border-red-600/40' 
                       : mintStatus.includes('Success') 
@@ -306,9 +303,9 @@ const NFTCreator = () => {
                 </Button>
               </form>
             ) : (
-              <div className="text-center py-20">
-                <h2 className="text-2xl font-semibold mb-4 text-white">Connect Your Wallet</h2>
-                <p className="text-gray-300 mb-6">Connect your wallet to create an amazing NFT</p>
+              <div className="text-center py-12 md:py-20">
+                <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-white">Connect Your Wallet</h2>
+                <p className="text-gray-300 mb-5 md:mb-6">Connect your wallet to create an amazing NFT</p>
                 <WalletMultiButton />
               </div>
             )}
