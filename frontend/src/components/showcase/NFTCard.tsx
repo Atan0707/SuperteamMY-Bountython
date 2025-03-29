@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatPrice } from '@/lib/nft-showcase';
-import { Loader2, Tag, DollarSign, User, ShoppingCart } from 'lucide-react';
+import { Loader2, Tag, DollarSign, User, ShoppingCart, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NFTListing } from './NFTTypes';
 
@@ -77,23 +77,35 @@ const NFTCard: React.FC<NFTCardProps> = ({
           </div>
         </div>
         
-        <Button 
-          onClick={() => onBuy(listing)}
-          disabled={isPending}
-          className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs mt-auto"
-        >
-          {isPendingThis ? (
-            <>
-              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              <ShoppingCart className="mr-1 h-3 w-3" />
-              Buy Now
-            </>
-          )}
-        </Button>
+        <div className="flex flex-col space-y-2">
+          <a 
+            href={`https://explorer.solana.com/address/${listing.account.nftMint.toString()}?cluster=devnet`}
+            target="_blank"
+            rel="noopener noreferrer" 
+            className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center"
+          >
+            <ExternalLink className="mr-1 h-3 w-3" />
+            View Details
+          </a>
+          
+          <Button 
+            onClick={() => onBuy(listing)}
+            disabled={isPending}
+            className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs"
+          >
+            {isPendingThis ? (
+              <>
+                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="mr-1 h-3 w-3" />
+                Buy Now
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
