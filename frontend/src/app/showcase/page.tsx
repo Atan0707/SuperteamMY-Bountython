@@ -149,16 +149,16 @@ const Showcase = () => {
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {listings.map((listing) => (
                   <div 
                     key={listing.publicKey.toString()} 
-                    className="bg-gray-900/80 backdrop-blur-md rounded-xl overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20"
+                    className="bg-gray-900/80 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-md hover:shadow-purple-500/20"
                   >
                     <div className="aspect-square w-full relative overflow-hidden">
                       {listing.loading ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                          <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
+                          <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
                         </div>
                       ) : (
                         <img 
@@ -172,23 +172,23 @@ const Showcase = () => {
                       )}
                     </div>
                     
-                    <div className="p-4">
-                      <h3 className="text-xl font-bold mb-2 truncate">{listing.account.nftName}</h3>
+                    <div className="p-3">
+                      <h3 className="text-base font-bold mb-1 truncate">{listing.account.nftName}</h3>
                       
-                      <div className="flex items-center gap-2 mb-3 text-sm text-gray-300">
-                        <Tag className="h-4 w-4 text-purple-400" />
+                      <div className="flex items-center gap-1 mb-2 text-xs text-gray-300">
+                        <Tag className="h-3 w-3 text-purple-400" />
                         <span>{listing.account.nftSymbol || 'NFT'}</span>
                       </div>
                       
                       {listing.metadata?.description && (
-                        <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+                        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
                           {listing.metadata.description}
                         </p>
                       )}
                       
-                      <div className="flex items-center gap-3 mb-4">
+                      <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center text-purple-300">
-                          <User className="h-4 w-4 mr-1" />
+                          <User className="h-3 w-3 mr-1" />
                           <a 
                             href={`https://explorer.solana.com/address/${listing.account.seller.toString()}?cluster=devnet`}
                             target="_blank"
@@ -199,9 +199,9 @@ const Showcase = () => {
                           </a>
                         </div>
                         
-                        <div className="flex items-center bg-purple-500/20 px-2 py-1 rounded-full">
-                          <DollarSign className="h-4 w-4 mr-1 text-purple-300" />
-                          <span className="text-sm font-semibold text-white">
+                        <div className="flex items-center bg-purple-500/20 px-2 py-0.5 rounded-full">
+                          <DollarSign className="h-3 w-3 mr-1 text-purple-300" />
+                          <span className="text-xs font-semibold text-white">
                             {formatPrice(parseInt(listing.account.price.toString()))} SOL
                           </span>
                         </div>
@@ -210,9 +210,9 @@ const Showcase = () => {
                       <Button 
                         onClick={() => handleBuyNft(listing)}
                         disabled={!connected}
-                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs"
                       >
-                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        <ShoppingCart className="mr-1 h-3 w-3" />
                         Buy Now
                       </Button>
                     </div>
