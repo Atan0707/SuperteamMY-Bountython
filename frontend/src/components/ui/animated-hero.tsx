@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { Umbrella } from "lucide-react";
 
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(
-    () => ["art", "craft", "masterpiece", "meme", "photograph"],
+    () => ["art", "craft", "masterpiece", "meme", "photograph", "anything"],
     []
   );
 
@@ -29,7 +30,10 @@ function Hero() {
             </Button>
           </div> */}
           <div className="flex gap-4 flex-col">
-            <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-center font-regular text-white">
+            <h1 className="text-6xl md:text-8xl mb-4 tracking-tighter text-center font-bold text-white">
+              PAYUNG <Umbrella className="inline-block w-16 h-16 md:w-20 md:h-20" />
+            </h1>
+            <h1 className="text-5xl md:text-5xl max-w-2xl tracking-tighter text-center font-regular text-white">
               <span className="text-white">Payung your</span>
               <span className="relative flex w-full justify-center overflow-hidden text-center md:pb-4 md:pt-1">
                 &nbsp;
