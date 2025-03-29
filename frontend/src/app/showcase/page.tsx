@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { getAllListings, formatPrice, buyNft } from '@/lib/nft-showcase';
+import { getAllListings, formatPrice, buyNft, WalletAdapter } from '@/lib/nft-showcase';
 import { PublicKey } from '@solana/web3.js';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -94,7 +94,7 @@ const Showcase = () => {
       toast.loading('Processing your purchase...');
       
       const result = await buyNft(
-        wallet as any,
+        wallet as WalletAdapter,
         connection,
         listing.account.nftMint
       );
@@ -104,10 +104,13 @@ const Showcase = () => {
         // Refresh listings
         fetchListings();
       } else {
-        toast.error('Failed to purchase NFT: ' + (result.error?.message || 'Unknown error'));
+        toast.error('Failed to purchase NFT: ' + (typeof result.error === 'object' && result.error !== null && 'message' in result.error 
+          ? (result.error as { message: string }).message 
+          : 'Unknown error'));
       }
-    } catch (error: any) {
-      toast.error('Error purchasing NFT: ' + (error?.message || 'Unknown error'));
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error('Error purchasing NFT: ' + errorMessage);
       console.error('Error purchasing NFT:', error);
     }
   };

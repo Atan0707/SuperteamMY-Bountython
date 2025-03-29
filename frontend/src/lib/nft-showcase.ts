@@ -10,6 +10,27 @@ export type WalletAdapter = AnchorWallet & {
   signAllTransactions: (transactions: anchor.web3.Transaction[]) => Promise<anchor.web3.Transaction[]>;
 };
 
+// Define types for the NFT listing account
+interface NftListingAccount {
+  seller: PublicKey;
+  nftMint: PublicKey;
+  price: anchor.BN;
+  nftName: string;
+  nftSymbol: string;
+  nftUri: string;
+  isActive: boolean;
+}
+
+interface NftListingAccountWithPubkey {
+  publicKey: PublicKey;
+  account: NftListingAccount;
+}
+
+type NftListingAccountNamespace = {
+  fetch: (address: PublicKey) => Promise<NftListingAccount>;
+  all: () => Promise<NftListingAccountWithPubkey[]>;
+};
+
 export async function listNFT(
   wallet: WalletAdapter, 
   connection: Connection,
@@ -30,7 +51,7 @@ export async function listNFT(
 
     const program = new anchor.Program(
       idl as anchor.Idl,
-      NFT_SHOWCASE_PROGRAM_ID,
+      // NFT_SHOWCASE_PROGRAM_ID,
       provider
     );
 
@@ -103,7 +124,7 @@ export async function cancelListing(
 
     const program = new anchor.Program(
       idl as anchor.Idl,
-      NFT_SHOWCASE_PROGRAM_ID,
+      // NFT_SHOWCASE_PROGRAM_ID,
       provider
     );
 
@@ -170,7 +191,7 @@ export async function buyNft(
 
     const program = new anchor.Program(
       idl as anchor.Idl,
-      NFT_SHOWCASE_PROGRAM_ID,
+      // NFT_SHOWCASE_PROGRAM_ID,
       provider
     );
 
@@ -184,7 +205,7 @@ export async function buyNft(
     );
 
     // Get the listing data to find the seller
-    const listingData = await program.account.nftListing.fetch(listingPda);
+    const listingData = await (program.account as { nftListing: NftListingAccountNamespace }).nftListing.fetch(listingPda);
     const sellerWallet = listingData.seller;
 
     // Get the buyer's token account for this NFT
@@ -229,21 +250,27 @@ export async function buyNft(
 // Get all NFT listings
 export async function getAllListings(connection: Connection) {
   try {
+    const dummyWallet = {
+      publicKey: new PublicKey('11111111111111111111111111111111'),
+      signTransaction: async () => { throw new Error('Not implemented'); },
+      signAllTransactions: async () => { throw new Error('Not implemented'); }
+    };
+
     const provider = new anchor.AnchorProvider(
       connection,
-      { publicKey: null, signTransaction: async () => null, signAllTransactions: async () => [] },
+      dummyWallet,
       { commitment: 'processed' as Commitment }
     );
 
     const program = new anchor.Program(
       idl as anchor.Idl,
-      NFT_SHOWCASE_PROGRAM_ID,
+      // NFT_SHOWCASE_PROGRAM_ID,
       provider
     );
 
     // Fetch all accounts of type NftListing
-    const listings = await program.account.nftListing.all();
-    return listings.filter(listing => listing.account.isActive);
+    const listings = await (program.account as { nftListing: NftListingAccountNamespace }).nftListing.all();
+    return listings.filter((listing: NftListingAccountWithPubkey) => listing.account.isActive);
   } catch (error) {
     console.error('Error fetching listings:', error);
     return [];

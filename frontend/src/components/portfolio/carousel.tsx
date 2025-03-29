@@ -9,7 +9,7 @@ interface GalleryItem {
   address?: string;
   symbol?: string;
   uri?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 interface CarouselProps {

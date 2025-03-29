@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import { listNFT } from '@/lib/nft-showcase';
+import { listNFT, WalletAdapter } from '@/lib/nft-showcase';
 import { Button } from '@/components/ui/button';
 import { 
   Dialog, 
@@ -25,7 +25,7 @@ interface ListNftButtonProps {
     symbol?: string;
     uri: string;
     image?: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -48,7 +48,7 @@ export function ListNftButton({ nft }: ListNftButtonProps) {
       const priceInLamports = parseFloat(price) * 1_000_000_000;
       
       const result = await listNFT(
-        wallet as any,
+        wallet as WalletAdapter,
         connection,
         new PublicKey(nft.address),
         priceInLamports,
@@ -61,10 +61,13 @@ export function ListNftButton({ nft }: ListNftButtonProps) {
         toast.success('NFT listed successfully!');
         setOpen(false);
       } else {
-        toast.error('Failed to list NFT: ' + (result.error?.message || 'Unknown error'));
+        toast.error('Failed to list NFT: ' + (typeof result.error === 'object' && result.error !== null && 'message' in result.error 
+          ? (result.error as { message: string }).message 
+          : 'Unknown error'));
       }
-    } catch (error: any) {
-      toast.error('Error listing NFT: ' + (error?.message || 'Unknown error'));
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error('Error listing NFT: ' + errorMessage);
       console.error('Error listing NFT:', error);
     } finally {
       setIsSubmitting(false);

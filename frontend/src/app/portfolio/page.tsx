@@ -45,7 +45,7 @@ interface GalleryItem {
   url: string;
   image: string;
   address: string;
-  symbol: string;
+  symbol?: string;
   uri: string;
   metadata: NFTMetadata;
 }
@@ -125,7 +125,7 @@ const Portfolio = () => {
         address: nft.address,
         symbol: nft.symbol,
         uri: nft.uri,
-        metadata: nft.metadata
+        metadata: nft.metadata as NFTMetadata
       }));
       
       setCarouselItems(items);
