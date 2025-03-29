@@ -110,7 +110,7 @@ export function ShowcasedNfts() {
     return (
       <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white mb-16 text-center py-12">
         <h3 className="text-lg font-semibold mb-2">No NFTs Listed For Sale</h3>
-        <p className="text-gray-300 mb-4">You don&apos;t have any NFTs currently listed on the marketplace</p>
+        <p className="text-gray-300 mb-4">You don&apos;t have any NFTs currently showcased in the public</p>
       </div>
     );
   }
@@ -119,8 +119,8 @@ export function ShowcasedNfts() {
     <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 md:p-6 text-white mb-16">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-semibold">My Listed NFTs</h2>
-          <p className="text-gray-300 text-sm">NFTs you&apos;ve listed for sale on the marketplace</p>
+          <h2 className="text-xl md:text-2xl font-semibold">Showcased NFTs</h2>
+          <p className="text-gray-300 text-sm">NFTs you&apos;ve showcased in the public</p>
         </div>
         <Button 
           onClick={() => refetch()} 
