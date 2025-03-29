@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { getAllListings, formatPrice, buyNft, WalletAdapter } from '@/lib/nft-showcase';
 import { PublicKey } from '@solana/web3.js';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { Loader2, Tag, DollarSign, User, ShoppingCart } from 'lucide-react';
+import { Loader2, Tag, DollarSign, User, ShoppingCart, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface NFTListing {
   publicKey: PublicKey;
@@ -27,37 +28,29 @@ interface NFTListing {
     description?: string;
   };
   image?: string;
-  loading?: boolean;
 }
 
 const Showcase = () => {
-  const [listings, setListings] = useState<NFTListing[]>([]);
-  const [loading, setLoading] = useState(true);
   const { connection } = useConnection();
   const wallet = useWallet();
   const { connected } = wallet;
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchListings();
-  }, [connection]);
-
-  const fetchListings = async () => {
-    setLoading(true);
-    try {
+  // Use React Query to fetch and cache listings
+  const { 
+    data: listings = [], 
+    isLoading, 
+    isError, 
+    refetch 
+  } = useQuery({
+    queryKey: ['nftListings'],
+    queryFn: async () => {
       // Get all active listings from the program
       const nftListings = await getAllListings(connection);
       
-      // Initialize with basic data
-      const listingsWithMetadata = nftListings.map(listing => ({
-        ...listing,
-        loading: true
-      }));
-      
-      setListings(listingsWithMetadata);
-      
       // Fetch metadata for each listing
       const listingsWithImages = await Promise.all(
-        listingsWithMetadata.map(async (listing) => {
+        nftListings.map(async (listing) => {
           try {
             const response = await fetch(listing.account.nftUri);
             if (!response.ok) throw new Error('Failed to fetch metadata');
@@ -65,54 +58,56 @@ const Showcase = () => {
             return {
               ...listing,
               metadata,
-              image: metadata.image,
-              loading: false
+              image: metadata.image as string,
             };
           } catch (error) {
             console.error(`Error fetching metadata for ${listing.account.nftName}:`, error);
-            return { ...listing, loading: false };
+            return { ...listing, metadata: {}, image: undefined };
           }
         })
       );
       
-      setListings(listingsWithImages);
-    } catch (error) {
-      console.error('Error fetching listings:', error);
-      toast.error('Failed to load NFT listings');
-    } finally {
-      setLoading(false);
-    }
-  };
+      return listingsWithImages as NFTListing[];
+    },
+  });
 
-  const handleBuyNft = async (listing: NFTListing) => {
-    if (!connected) {
-      toast.error('Please connect your wallet to purchase NFTs');
-      return;
-    }
-
-    try {
-      toast.loading('Processing your purchase...');
-      
-      const result = await buyNft(
+  // Use mutation for buying NFTs
+  const buyNftMutation = useMutation({
+    mutationFn: async (listing: NFTListing) => {
+      return await buyNft(
         wallet as WalletAdapter,
         connection,
         listing.account.nftMint
       );
-
+    },
+    onMutate: () => {
+      toast.loading('Processing your purchase...');
+    },
+    onSuccess: (result) => {
       if (result.success) {
         toast.success('NFT purchased successfully!');
         // Refresh listings
-        fetchListings();
+        queryClient.invalidateQueries({ queryKey: ['nftListings'] });
       } else {
         toast.error('Failed to purchase NFT: ' + (typeof result.error === 'object' && result.error !== null && 'message' in result.error 
           ? (result.error as { message: string }).message 
           : 'Unknown error'));
       }
-    } catch (error: unknown) {
+    },
+    onError: (error: unknown) => {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast.error('Error purchasing NFT: ' + errorMessage);
       console.error('Error purchasing NFT:', error);
     }
+  });
+
+  const handleBuyNft = (listing: NFTListing) => {
+    if (!connected) {
+      toast.error('Please connect your wallet to purchase NFTs');
+      return;
+    }
+    
+    buyNftMutation.mutate(listing);
   };
 
   return (
@@ -127,16 +122,36 @@ const Showcase = () => {
           </div>
 
           <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white">
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold mb-2">Available NFTs for Purchase</h2>
-              <p className="text-gray-300">Browse and buy unique NFTs listed by other creators</p>
-              {/* <p className="text-gray-300">Some hidden gems might be here 👀</p> */}
+            <div className="mb-8 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-semibold mb-2">Available NFTs for Purchase</h2>
+                <p className="text-gray-300">Browse and buy unique NFTs listed by other creators</p>
+              </div>
+              <Button 
+                onClick={() => refetch()} 
+                variant="outline" 
+                size="sm"
+                className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+              </Button>
             </div>
 
-            {loading ? (
+            {isLoading ? (
               <div className="text-center py-20">
                 <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent"></div>
                 <p className="mt-4 text-gray-200">Loading NFTs...</p>
+              </div>
+            ) : isError ? (
+              <div className="text-center py-20">
+                <h3 className="text-xl font-medium mb-4 text-red-400">Error Loading NFTs</h3>
+                <p className="text-gray-300 mb-6">There was an error loading the NFT listings.</p>
+                <Button 
+                  onClick={() => refetch()}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  Try Again
+                </Button>
               </div>
             ) : listings.length === 0 ? (
               <div className="text-center py-20">
@@ -154,9 +169,9 @@ const Showcase = () => {
                     className="bg-gray-900/80 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-md hover:shadow-purple-500/20 max-w-full flex flex-col h-full"
                   >
                     <div className="aspect-square w-full relative overflow-hidden flex-shrink-0">
-                      {listing.loading ? (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                          <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
+                      {buyNftMutation.isPending && buyNftMutation.variables?.publicKey.toString() === listing.publicKey.toString() ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                          <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
                         </div>
                       ) : (
                         <img 
@@ -209,11 +224,20 @@ const Showcase = () => {
                       
                       <Button 
                         onClick={() => handleBuyNft(listing)}
-                        disabled={!connected}
+                        disabled={!connected || buyNftMutation.isPending}
                         className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs mt-auto"
                       >
-                        <ShoppingCart className="mr-1 h-3 w-3" />
-                        Buy Now
+                        {buyNftMutation.isPending && buyNftMutation.variables?.publicKey.toString() === listing.publicKey.toString() ? (
+                          <>
+                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingCart className="mr-1 h-3 w-3" />
+                            Buy Now
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>

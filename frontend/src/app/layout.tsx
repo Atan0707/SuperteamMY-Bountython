@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./global.css";
 import { WalletContextProvider } from "@/components/WalletProvider";
+import { QueryProvider } from "@/components/QueryProvider";
 import { Navbar } from "@/components/navbar";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <WalletContextProvider>
-          <main className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-            <Navbar />
-            {children}
-          </main>
-        </WalletContextProvider>
+        <QueryProvider>
+          <WalletContextProvider>
+            <main className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+              <Navbar />
+              {children}
+            </main>
+          </WalletContextProvider>
+        </QueryProvider>
       </body>
     </html>
   );
