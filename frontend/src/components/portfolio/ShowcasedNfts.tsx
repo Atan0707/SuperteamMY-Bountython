@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { getAllListings, formatPrice } from '@/lib/nft-showcase';
 import { PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, RefreshCw, Tag, DollarSign } from 'lucide-react';
+import { Loader2, RefreshCw, Tag, DollarSign, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CancelListingButton } from '@/components/listing/CancelListingButton';
+import NFTDetailsDialog from '@/components/showcase/NFTDetailsDialog';
 
 interface NFTListing {
   publicKey: PublicKey;
@@ -30,6 +31,8 @@ export function ShowcasedNfts() {
   const { connection } = useConnection();
   const wallet = useWallet();
   const { publicKey, connected } = wallet;
+  const [selectedListing, setSelectedListing] = useState<NFTListing | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Use React Query to fetch and cache listings
   const { 
@@ -115,6 +118,11 @@ export function ShowcasedNfts() {
     );
   }
 
+  const handleOpenDetails = (listing: NFTListing) => {
+    setSelectedListing(listing);
+    setDetailsOpen(true);
+  };
+
   return (
     <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8">
       <div className="flex justify-between items-center mb-4">
@@ -173,6 +181,13 @@ export function ShowcasedNfts() {
               </div>
               
               <div className="mt-auto">
+                <Button
+                  onClick={() => handleOpenDetails(listing)}
+                  className="w-full bg-purple-600 hover:bg-purple-700 py-0.5 h-6 text-xs rounded-md flex items-center justify-center mb-1"
+                >
+                  <ExternalLink className="mr-1 h-3 w-3" />
+                  View Details
+                </Button>
                 <CancelListingButton 
                   nftMint={listing.account.nftMint.toString()} 
                   isOwner={connected && publicKey?.toString() === listing.account.seller.toString()}
@@ -182,6 +197,14 @@ export function ShowcasedNfts() {
           </div>
         ))}
       </div>
+
+      {selectedListing && (
+        <NFTDetailsDialog 
+          listing={selectedListing}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+        />
+      )}
     </div>
   );
 } 

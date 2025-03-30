@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
@@ -13,6 +13,7 @@ import { RefreshCw, Tag, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ShowcasedNfts } from '@/components/portfolio/ShowcasedNfts';
 import { ListNftButton } from '@/components/listing/ListNftButton';
+import NFTDetailsDialog from '@/components/portfolio/NFTDetailsDialog';
 
 // Interface for the asset data structure that Metaplex returns
 interface DigitalAsset {
@@ -44,6 +45,8 @@ type NFT = {
 const Portfolio = () => {
   const { publicKey: walletPublicKey, connected } = useWallet();
   const wallet = useWallet();
+  const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Use React Query to fetch and cache NFTs
   const { 
@@ -107,6 +110,11 @@ const Portfolio = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false
   });
+
+  const handleOpenDetails = (nft: NFT) => {
+    setSelectedNft(nft);
+    setDetailsOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
@@ -200,15 +208,13 @@ const Portfolio = () => {
                       )}
                       
                       <div className="mt-auto">
-                        <a 
-                          href={`https://explorer.solana.com/address/${nft.address}?cluster=devnet`}
-                          target="_blank"
-                          rel="noopener noreferrer" 
+                        <Button 
+                          onClick={() => handleOpenDetails(nft)}
                           className="w-full bg-purple-600 hover:bg-purple-700 py-0.5 h-6 text-xs rounded-md flex items-center justify-center mb-1"
                         >
                           <ExternalLink className="mr-1 h-3 w-3" />
                           View Details
-                        </a>
+                        </Button>
                         
                         <ListNftButton 
                           nft={{
@@ -239,6 +245,14 @@ const Portfolio = () => {
           )}
         </div>
       </div>
+      
+      {selectedNft && (
+        <NFTDetailsDialog 
+          nft={selectedNft}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+        />
+      )}
     </div>
   );
 };

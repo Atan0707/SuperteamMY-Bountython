@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatPrice } from '@/lib/nft-showcase';
 import { Loader2, Tag, DollarSign, User, ShoppingCart, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NFTListing } from './NFTTypes';
+import NFTDetailsDialog from './NFTDetailsDialog';
 
 interface NFTCardProps {
   listing: NFTListing;
@@ -17,6 +18,7 @@ const NFTCard: React.FC<NFTCardProps> = ({
   isPending, 
   pendingId 
 }) => {
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const isPendingThis = isPending && pendingId === listing.publicKey.toString();
   
   return (
@@ -78,15 +80,13 @@ const NFTCard: React.FC<NFTCardProps> = ({
         </div>
         
         <div className="flex flex-col space-y-1">
-          <a 
-            href={`https://explorer.solana.com/address/${listing.account.nftMint.toString()}?cluster=devnet`}
-            target="_blank"
-            rel="noopener noreferrer" 
+          <Button
+            onClick={() => setDetailsOpen(true)}
             className="w-full bg-purple-600 hover:bg-purple-700 py-0.5 h-6 text-xs rounded-md flex items-center justify-center"
           >
             <ExternalLink className="mr-1 h-3 w-3" />
             View Details
-          </a>
+          </Button>
           
           <Button 
             onClick={() => onBuy(listing)}
@@ -107,6 +107,12 @@ const NFTCard: React.FC<NFTCardProps> = ({
           </Button>
         </div>
       </div>
+
+      <NFTDetailsDialog 
+        listing={listing}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      />
     </div>
   );
 };
