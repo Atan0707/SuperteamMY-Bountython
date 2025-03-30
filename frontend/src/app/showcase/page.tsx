@@ -94,27 +94,27 @@ const Showcase = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
-        <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-row justify-between items-center mb-8 pt-4 sm:pt-6 gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Showcase</h1>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex flex-row justify-between items-center mb-4 pt-2 sm:pt-4 gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">Showcase</h1>
             <div>
-              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-2 !px-4 !text-sm !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
+              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-1.5 !px-3 !text-xs !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
             </div>
           </div>
 
-          <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white">
-            <div className="mb-8 flex justify-between items-center">
+          <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white">
+            <div className="flex justify-between items-center mb-4">
               <div>
-                <h2 className="text-2xl font-semibold mb-2">Available NFTs for Purchase</h2>
-                <p className="text-gray-300">Browse and buy unique NFTs listed by other creators</p>
+                <h2 className="text-lg font-semibold mb-1">Available NFTs for Purchase</h2>
+                <p className="text-gray-300 text-sm">Browse and buy unique NFTs listed by other creators</p>
               </div>
               <Button 
                 onClick={() => refetch()} 
                 variant="outline" 
                 size="sm"
-                className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white"
+                className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs"
               >
-                <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+                <RefreshCw className="h-3 w-3 mr-1" /> Refresh
               </Button>
             </div>
             

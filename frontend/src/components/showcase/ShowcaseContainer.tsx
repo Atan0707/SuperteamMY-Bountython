@@ -91,14 +91,14 @@ const ShowcaseContainer: React.FC = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
-        <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-6">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <ShowcaseHeader 
             title="Showcase" 
             description="Browse and buy unique NFTs listed by other creators" 
             onRefresh={refetch} 
           />
           
-          <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white">
+          <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white">
             <NFTGrid 
               listings={listings}
               isLoading={isLoading}
