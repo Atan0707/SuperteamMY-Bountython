@@ -68,7 +68,7 @@ export function CancelListingButton({ nftMint, isOwner = true }: CancelListingBu
         onClick={() => setOpen(true)} 
         variant="destructive"
         size="sm"
-        className="w-full bg-red-600 hover:bg-red-700 py-1 h-8 text-xs rounded-md flex items-center justify-center"
+        className="w-full bg-red-600 hover:bg-red-700 py-0.5 h-6 text-xs rounded-md flex items-center justify-center"
       >
         <X className="mr-1 h-3 w-3" /> Cancel Listing
       </Button>

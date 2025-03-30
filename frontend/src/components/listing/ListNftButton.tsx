@@ -78,7 +78,7 @@ export function ListNftButton({ nft }: ListNftButtonProps) {
     <>
       <Button 
         onClick={() => setOpen(true)}
-        className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center"
+        className="w-full bg-purple-600 hover:bg-purple-700 py-0.5 h-6 text-xs rounded-md flex items-center justify-center"
         size="sm"
       >
         Showcase NFT <ArrowUpRight className="ml-1 h-3 w-3" />

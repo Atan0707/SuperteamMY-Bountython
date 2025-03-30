@@ -111,62 +111,62 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
-        <div className="container mx-auto p-4 md:p-6 pb-24">
-          <div className="flex justify-between items-center mb-6 md:mb-8 pt-4 md:pt-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Portfolio</h1>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 pb-24">
+          <div className="flex justify-between items-center mb-4 pt-2 sm:pt-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">Portfolio</h1>
             <div>
-              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-2 !px-4 !text-sm !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
+              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-1.5 !px-3 !text-xs !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
             </div>
           </div>
 
           {!connected ? (
-            <div className="text-center py-12 md:py-20 bg-black/30 backdrop-blur-md rounded-xl">
-              <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-white">Connect Your Wallet</h2>
-              <p className="text-gray-200 mb-5 md:mb-6">Connect your wallet to view your NFT collection</p>
-              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-2 !px-4 !text-sm !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
+            <div className="text-center py-8 md:py-12 bg-black/30 backdrop-blur-md rounded-xl">
+              <h2 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-white">Connect Your Wallet</h2>
+              <p className="text-gray-200 text-sm mb-4 md:mb-5">Connect your wallet to view your NFT collection</p>
+              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-1.5 !px-3 !text-xs !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
             </div>
           ) : isLoading ? (
-            <div className="text-center py-12 md:py-20 bg-black/30 backdrop-blur-md rounded-xl">
-              <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent"></div>
-              <p className="mt-4 text-gray-200">Loading your NFTs...</p>
+            <div className="text-center py-8 md:py-12 bg-black/30 backdrop-blur-md rounded-xl">
+              <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent"></div>
+              <p className="mt-3 text-gray-200 text-sm">Loading your NFTs...</p>
             </div>
           ) : isError ? (
-            <div className="text-center py-12 md:py-20 bg-black/30 backdrop-blur-md rounded-xl">
-              <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-red-400">Error Loading NFTs</h2>
-              <p className="text-gray-200 mb-5 md:mb-6">There was an error loading your NFT collection</p>
+            <div className="text-center py-8 md:py-12 bg-black/30 backdrop-blur-md rounded-xl">
+              <h2 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-red-400">Error Loading NFTs</h2>
+              <p className="text-gray-200 text-sm mb-4 md:mb-5">There was an error loading your NFT collection</p>
               <Button 
                 onClick={() => refetch()}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-purple-600 hover:bg-purple-700 text-xs py-0.5 h-7"
               >
                 Try Again
               </Button>
             </div>
           ) : nfts.length === 0 ? (
-            <div className="text-center py-12 md:py-20 bg-black/30 backdrop-blur-md rounded-xl">
-              <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-white">No NFTs Found</h2>
-              <p className="text-gray-200 mb-5 md:mb-6">You don&apos;t have any NFTs in your wallet yet</p>
-              <Link href="/create" className="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700">
+            <div className="text-center py-8 md:py-12 bg-black/30 backdrop-blur-md rounded-xl">
+              <h2 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 text-white">No NFTs Found</h2>
+              <p className="text-gray-200 text-sm mb-4 md:mb-5">You don&apos;t have any NFTs in your wallet yet</p>
+              <Link href="/create" className="inline-flex items-center px-4 py-1.5 bg-purple-600 text-white text-xs font-medium rounded-lg shadow-md hover:bg-purple-700">
                 Mint Your First NFT
               </Link>
             </div>
           ) : (
-            <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 md:p-6 text-white mb-16">
+            <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8">
               <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-semibold">My NFT Collection</h2>
+                  <h2 className="text-lg font-semibold mb-1">My NFT Collection</h2>
                   <p className="text-gray-300 text-sm">Browse your owned NFTs</p>
                 </div>
                 <Button 
                   onClick={() => refetch()} 
                   variant="outline" 
                   size="sm"
-                  className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white"
+                  className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs"
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+                  <RefreshCw className="h-3 w-3 mr-1" /> Refresh
                 </Button>
               </div>
               
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 pb-8">
                 {nfts.map((nft) => (
                   <div 
                     key={nft.address} 
@@ -183,20 +183,20 @@ const Portfolio = () => {
                       />
                     </div>
                     
-                    <div className="p-3 flex flex-col flex-grow">
-                      <h3 className="text-base font-bold mb-1 truncate w-full">{nft.name}</h3>
+                    <div className="p-2 flex flex-col flex-grow">
+                      <h3 className="text-sm font-bold mb-0.5 truncate w-full">{nft.name}</h3>
                       
-                      <div className="flex items-center gap-1 mb-2 text-xs text-gray-300">
+                      <div className="flex items-center gap-1 mb-1 text-xs text-gray-300">
                         <Tag className="h-3 w-3 text-purple-400" />
-                        <span>{nft.symbol || 'NFT'}</span>
+                        <span className="text-xs">{nft.symbol || 'NFT'}</span>
                       </div>
                       
                       {nft.metadata?.description ? (
-                        <p className="text-gray-300 text-xs mb-2 line-clamp-2 min-h-[2rem]">
+                        <p className="text-gray-300 text-xs mb-1 line-clamp-1 min-h-[1rem]">
                           {nft.metadata.description}
                         </p>
                       ) : (
-                        <div className="min-h-[2rem]"></div>
+                        <div className="min-h-[1rem]"></div>
                       )}
                       
                       <div className="mt-auto">
@@ -204,7 +204,7 @@ const Portfolio = () => {
                           href={`https://explorer.solana.com/address/${nft.address}?cluster=devnet`}
                           target="_blank"
                           rel="noopener noreferrer" 
-                          className="w-full bg-purple-600 hover:bg-purple-700 py-1 h-8 text-xs rounded-md flex items-center justify-center mb-2"
+                          className="w-full bg-purple-600 hover:bg-purple-700 py-0.5 h-6 text-xs rounded-md flex items-center justify-center mb-1"
                         >
                           <ExternalLink className="mr-1 h-3 w-3" />
                           View Details

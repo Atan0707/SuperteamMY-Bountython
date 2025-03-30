@@ -81,10 +81,10 @@ export function ShowcasedNfts() {
 
   if (isLoading) {
     return (
-      <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white mb-16 flex justify-center items-center min-h-[200px]">
+      <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8 flex justify-center items-center min-h-[150px]">
         <div className="flex flex-col items-center">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-500 mb-2" />
-          <p className="text-gray-300">Loading your listed NFTs...</p>
+          <Loader2 className="h-6 w-6 animate-spin text-purple-500 mb-2" />
+          <p className="text-gray-300 text-sm">Loading your listed NFTs...</p>
         </div>
       </div>
     );
@@ -92,15 +92,15 @@ export function ShowcasedNfts() {
 
   if (isError) {
     return (
-      <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white mb-16 text-center">
-        <p className="text-red-400 mb-4">Failed to load your showcased NFTs</p>
+      <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8 text-center">
+        <p className="text-red-400 mb-3 text-sm">Failed to load your showcased NFTs</p>
         <Button 
           onClick={() => refetch()}
           variant="outline" 
           size="sm"
-          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white"
+          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-7 px-2 text-xs"
         >
-          <RefreshCw className="h-4 w-4 mr-2" /> Try Again
+          <RefreshCw className="h-3 w-3 mr-1" /> Try Again
         </Button>
       </div>
     );
@@ -108,32 +108,32 @@ export function ShowcasedNfts() {
 
   if (myListings.length === 0) {
     return (
-      <div className="bg-black/30 backdrop-blur-md rounded-xl p-6 text-white mb-16 text-center py-12">
-        <h3 className="text-lg font-semibold mb-2">No NFTs Listed For Sale</h3>
-        <p className="text-gray-300 mb-4">You don&apos;t have any NFTs currently showcased in the public</p>
+      <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8 text-center py-8">
+        <h3 className="text-lg font-semibold mb-1">No NFTs Listed For Sale</h3>
+        <p className="text-gray-300 text-sm mb-2">You don&apos;t have any NFTs currently showcased in the public</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 md:p-6 text-white mb-16">
+    <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-semibold">Showcased NFTs</h2>
+          <h2 className="text-lg font-semibold mb-1">Showcased NFTs</h2>
           <p className="text-gray-300 text-sm">NFTs you&apos;ve showcased in the public</p>
         </div>
         <Button 
           onClick={() => refetch()} 
           variant="outline" 
           size="sm"
-          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white"
+          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs"
         >
-          <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+          <RefreshCw className="h-3 w-3 mr-1" /> Refresh
         </Button>
       </div>
       
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
-        {myListings.map((listing) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 pb-8">
+        {myListings.map(listing => (
           <div 
             key={listing.publicKey.toString()} 
             className="bg-gray-900/80 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500/40 transition hover:border-purple-500 hover:shadow-md hover:shadow-purple-500/20 max-w-full flex flex-col h-full"
@@ -149,24 +149,24 @@ export function ShowcasedNfts() {
               />
             </div>
             
-            <div className="p-3 flex flex-col flex-grow">
-              <h3 className="text-base font-bold mb-1 truncate w-full">{listing.account.nftName}</h3>
+            <div className="p-2 flex flex-col flex-grow">
+              <h3 className="text-sm font-bold mb-0.5 truncate w-full">{listing.account.nftName}</h3>
               
-              <div className="flex items-center gap-1 mb-2 text-xs text-gray-300">
+              <div className="flex items-center gap-1 mb-1 text-xs text-gray-300">
                 <Tag className="h-3 w-3 text-purple-400" />
-                <span>{listing.account.nftSymbol || 'NFT'}</span>
+                <span className="text-xs">{listing.account.nftSymbol || 'NFT'}</span>
               </div>
               
               {listing.metadata?.description ? (
-                <p className="text-gray-300 text-xs mb-2 line-clamp-2 min-h-[2rem]">
+                <p className="text-gray-300 text-xs mb-1 line-clamp-1 min-h-[1rem]">
                   {listing.metadata.description}
                 </p>
               ) : (
-                <div className="min-h-[2rem]"></div>
+                <div className="min-h-[1rem]"></div>
               )}
               
-              <div className="flex items-center mb-3 text-xs">
-                <DollarSign className="h-3 w-3 mr-1 text-purple-300" />
+              <div className="flex items-center mb-2 text-xs">
+                <DollarSign className="h-3 w-3 mr-0.5 text-purple-300" />
                 <span className="font-semibold text-purple-300">
                   {formatPrice(listing.account.price.toString())} SOL
                 </span>
