@@ -7,6 +7,7 @@ import { Loader2, RefreshCw, Tag, DollarSign, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { CancelListingButton } from '@/components/listing/CancelListingButton';
 import NFTDetailsDialog from '@/components/showcase/NFTDetailsDialog';
+import { showSuccessToast, showErrorToast } from '@/lib/toast';
 
 interface NFTListing {
   publicKey: PublicKey;
@@ -33,6 +34,7 @@ export function ShowcasedNfts() {
   const { publicKey, connected } = wallet;
   const [selectedListing, setSelectedListing] = useState<NFTListing | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Use React Query to fetch and cache listings
   const { 
@@ -43,29 +45,36 @@ export function ShowcasedNfts() {
   } = useQuery({
     queryKey: ['nftListings'],
     queryFn: async () => {
-      // Get all active listings from the program
-      const nftListings = await getAllListings(connection);
-      
-      // Fetch metadata for each listing
-      const listingsWithImages = await Promise.all(
-        nftListings.map(async (listing) => {
-          try {
-            const response = await fetch(listing.account.nftUri);
-            if (!response.ok) throw new Error('Failed to fetch metadata');
-            const metadata = await response.json();
-            return {
-              ...listing,
-              metadata,
-              image: metadata.image as string,
-            };
-          } catch (error) {
-            console.error(`Error fetching metadata for ${listing.account.nftName}:`, error);
-            return { ...listing, metadata: {}, image: undefined };
-          }
-        })
-      );
-      
-      return listingsWithImages as NFTListing[];
+      try {
+        // Get all active listings from the program
+        const nftListings = await getAllListings(connection);
+        
+        // Fetch metadata for each listing
+        const listingsWithImages = await Promise.all(
+          nftListings.map(async (listing) => {
+            try {
+              const response = await fetch(listing.account.nftUri);
+              if (!response.ok) throw new Error('Failed to fetch metadata');
+              const metadata = await response.json();
+              return {
+                ...listing,
+                metadata,
+                image: metadata.image as string,
+              };
+            } catch (error) {
+              console.error(`Error fetching metadata for ${listing.account.nftName}:`, error);
+              showErrorToast(`Failed to fetch metadata for ${listing.account.nftName}`);
+              return { ...listing, metadata: {}, image: undefined };
+            }
+          })
+        );
+        
+        return listingsWithImages as NFTListing[];
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        showErrorToast(`Failed to fetch NFT listings: ${errorMessage}`);
+        throw error;
+      }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
@@ -77,6 +86,19 @@ export function ShowcasedNfts() {
     ? listings.filter(listing => 
         listing.account.seller.toString() === publicKey.toString())
     : [];
+
+  const handleRefetch = async () => {
+    try {
+      setIsRefreshing(true);
+      await refetch();
+      showSuccessToast('NFT listings refreshed successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showErrorToast(`Failed to refresh NFT listings: ${errorMessage}`);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   if (!connected) {
     return null; // Don't show this section if wallet is not connected
@@ -98,12 +120,13 @@ export function ShowcasedNfts() {
       <div className="bg-black/30 backdrop-blur-md rounded-xl p-4 text-white mb-8 text-center">
         <p className="text-red-400 mb-3 text-sm">Failed to load your showcased NFTs</p>
         <Button 
-          onClick={() => refetch()}
-          variant="outline" 
+          onClick={handleRefetch}
+          variant="outline"
           size="sm"
-          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-7 px-2 text-xs"
+          className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10 hover:text-purple-300"
         >
-          <RefreshCw className="h-3 w-3 mr-1" /> Try Again
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Try Again
         </Button>
       </div>
     );
@@ -131,12 +154,18 @@ export function ShowcasedNfts() {
           <p className="text-gray-300 text-sm">NFTs you&apos;ve showcased in the public</p>
         </div>
         <Button 
-          onClick={() => refetch()} 
+          onClick={handleRefetch} 
           variant="outline" 
           size="sm"
-          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs"
+          disabled={isRefreshing}
+          className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <RefreshCw className="h-3 w-3 mr-1" /> Refresh
+          {isRefreshing ? (
+            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+          ) : (
+            <RefreshCw className="h-3 w-3 mr-1" />
+          )}
+          {isRefreshing ? 'Refreshing...' : 'Refresh'}
         </Button>
       </div>
       

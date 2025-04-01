@@ -9,11 +9,12 @@ import { publicKey } from '@metaplex-foundation/umi';
 import { fetchAllDigitalAssetWithTokenByOwner } from '@metaplex-foundation/mpl-token-metadata';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { RefreshCw, Tag, ExternalLink } from 'lucide-react';
+import { RefreshCw, Tag, ExternalLink, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ShowcasedNfts } from '@/components/portfolio/ShowcasedNfts';
 import { ListNftButton } from '@/components/listing/ListNftButton';
 import NFTDetailsDialog from '@/components/portfolio/NFTDetailsDialog';
+import { showSuccessToast, showErrorToast } from '@/lib/toast';
 
 // Interface for the asset data structure that Metaplex returns
 interface DigitalAsset {
@@ -47,6 +48,7 @@ const Portfolio = () => {
   const wallet = useWallet();
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Use React Query to fetch and cache NFTs
   const { 
@@ -116,6 +118,19 @@ const Portfolio = () => {
     setDetailsOpen(true);
   };
 
+  const handleRefetch = async () => {
+    try {
+      setIsRefreshing(true);
+      await refetch();
+      showSuccessToast('NFT collection refreshed successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showErrorToast(`Failed to refresh NFT collection: ${errorMessage}`);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>
       <div className="min-h-screen bg-black/60 backdrop-blur-sm">
@@ -165,12 +180,23 @@ const Portfolio = () => {
                   <p className="text-gray-300 text-sm">Browse your owned NFTs</p>
                 </div>
                 <Button 
-                  onClick={() => refetch()} 
+                  onClick={handleRefetch} 
                   variant="outline" 
                   size="sm"
-                  className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs"
+                  disabled={isRefreshing}
+                  className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <RefreshCw className="h-3 w-3 mr-1" /> Refresh
+                  {isRefreshing ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      Refreshing...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Refresh
+                    </>
+                  )}
                 </Button>
               </div>
               

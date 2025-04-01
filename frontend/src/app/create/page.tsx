@@ -1,12 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { NFTCreatorForm, WalletConnect } from '@/components/create';
+import { showErrorToast } from '@/lib/toast';
 
 const NFTCreator = () => {
   const { connected } = useWallet();
+
+  useEffect(() => {
+    const handleDisconnect = () => {
+      if (!connected) {
+        showErrorToast('Wallet disconnected. Please reconnect to continue.');
+      }
+    };
+
+    // Listen for disconnect events
+    window.addEventListener('beforeunload', handleDisconnect);
+    return () => window.removeEventListener('beforeunload', handleDisconnect);
+  }, [connected]);
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/bg-image.jpg)' }}>

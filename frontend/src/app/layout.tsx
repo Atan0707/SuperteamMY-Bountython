@@ -4,6 +4,7 @@ import "./global.css";
 import { WalletContextProvider } from "@/components/WalletProvider";
 import { QueryProvider } from "@/components/QueryProvider";
 import { Navbar } from "@/components/navbar";
+import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({
               <Navbar />
               {children}
             </main>
+            <Toaster richColors />
           </WalletContextProvider>
         </QueryProvider>
       </body>

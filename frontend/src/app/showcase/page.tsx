@@ -1,14 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { getAllListings, buyNft, WalletAdapter } from '@/lib/nft-showcase';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { NFTGrid, NFTListing, BuyResult } from '@/components/showcase';
+// import { Toaster } from 'sonner';
 // import { TransactionHistory } from '@/components/showcase';
 
 const Showcase = () => {
@@ -16,6 +17,7 @@ const Showcase = () => {
   const wallet = useWallet();
   const { connected } = wallet;
   const queryClient = useQueryClient();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Use React Query to fetch and cache listings
   const { 
@@ -62,9 +64,10 @@ const Showcase = () => {
       );
     },
     onMutate: () => {
-      toast.loading('Processing your purchase...');
+      return toast.loading('Processing your purchase...');
     },
-    onSuccess: (result) => {
+    onSuccess: (result, _, loadingToastId) => {
+      toast.dismiss(loadingToastId);
       if (result.success) {
         toast.success('NFT purchased successfully!');
         // Refresh listings
@@ -75,12 +78,26 @@ const Showcase = () => {
           : 'Unknown error'));
       }
     },
-    onError: (error: unknown) => {
+    onError: (error: unknown, _, loadingToastId) => {
+      toast.dismiss(loadingToastId);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast.error('Error purchasing NFT: ' + errorMessage);
       console.error('Error purchasing NFT:', error);
     }
   });
+
+  const handleRefetch = async () => {
+    try {
+      setIsRefreshing(true);
+      await refetch();
+      toast.success('NFT listings refreshed successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Failed to refresh NFT listings: ${errorMessage}`);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleBuyNft = (listing: NFTListing) => {
     if (!connected) {
@@ -97,8 +114,22 @@ const Showcase = () => {
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="flex flex-row justify-between items-center mb-4 pt-2 sm:pt-4 gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-white">Showcase</h1>
-            <div>
-              <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700 !rounded-lg !py-1.5 !px-3 !text-xs !font-medium !transition-colors !shadow-md !flex !justify-center !items-center" />
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={handleRefetch} 
+                variant="outline" 
+                size="sm"
+                disabled={isRefreshing}
+                className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isRefreshing ? (
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                )}
+                {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              </Button>
+              <WalletMultiButton />
             </div>
           </div>
 
@@ -108,14 +139,6 @@ const Showcase = () => {
                 <h2 className="text-lg font-semibold mb-1">Available NFTs for Purchase</h2>
                 <p className="text-gray-300 text-sm">Browse and buy unique NFTs listed by other creators</p>
               </div>
-              <Button 
-                onClick={() => refetch()} 
-                variant="outline" 
-                size="sm"
-                className="bg-purple-600/20 hover:bg-purple-600/30 border-purple-500/40 text-white h-8 px-2 text-xs"
-              >
-                <RefreshCw className="h-3 w-3 mr-1" /> Refresh
-              </Button>
             </div>
             
             <NFTGrid 
@@ -123,9 +146,9 @@ const Showcase = () => {
               isLoading={isLoading}
               isError={isError}
               onBuy={handleBuyNft}
-              onRefresh={refetch}
+              onRefresh={handleRefetch}
               isPending={buyNftMutation.isPending}
-              pendingId={buyNftMutation.variables?.publicKey.toString()}
+              pendingId={buyNftMutation.variables?.account.nftMint.toString()}
             />
           </div>
           

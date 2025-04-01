@@ -115,20 +115,44 @@ export function ListNftButton({ nft }: ListNftButtonProps) {
               <Label htmlFor="price" className="text-right text-white">
                 Price
               </Label>
-              <div className="col-span-3 relative">
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  SOL
-                </span>
+              <div className="col-span-3">
+                <div className="relative mb-2">
+                  <Input
+                    id="price"
+                    type="text"
+                    pattern="[0-9]*\.?[0-9]*"
+                    placeholder="Enter amount"
+                    value={price}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                        setPrice(value);
+                      }
+                    }}
+                    className="bg-gray-800 border-gray-700 text-white"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    SOL
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  {[0.25, 0.5, 1].map((preset) => (
+                    <Button
+                      key={preset}
+                      type="button"
+                      onClick={() => setPrice(preset.toString())}
+                      variant={price === preset.toString() ? "default" : "outline"}
+                      size="sm"
+                      className={`flex-1 text-xs ${
+                        price === preset.toString()
+                          ? "bg-purple-600 hover:bg-purple-700 text-white"
+                          : "border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                      }`}
+                    >
+                      {preset} SOL
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { ImageUploader } from './ImageUploader';
 import { MintStatus } from './MintStatus';
+import { showSuccessToast, showErrorToast } from '@/lib/toast';
 
 export const NFTCreatorForm = () => {
   const [loading, setLoading] = useState(false);
@@ -76,19 +77,19 @@ export const NFTCreatorForm = () => {
     e.preventDefault();
     
     if (!connected) {
-      setMintStatus('Please connect your wallet first.');
+      showErrorToast('Please connect your wallet first.');
       return;
     }
 
     if (!selectedFile || !nftName) {
-      setMintStatus('Please select an image and provide a name.');
+      showErrorToast('Please select an image and provide a name.');
       return;
     }
 
     // Check if the Pinata JWT is defined
     const pinataJwt = process.env.NEXT_PUBLIC_PINATA_JWT;
     if (!pinataJwt) {
-      setMintStatus('Error: Pinata JWT is not configured. Please check your environment variables.');
+      showErrorToast('Error: Pinata JWT is not configured. Please check your environment variables.');
       return;
     }
 
@@ -152,6 +153,7 @@ export const NFTCreatorForm = () => {
       
       setNftUrl(`https://explorer.solana.com/address/${mint.publicKey}?cluster=devnet`);
       setMintStatus('Success! Your NFT has been created.');
+      showSuccessToast('NFT created successfully!');
       setLoading(false);
     } catch (error) {
       console.error('Error minting NFT:', error);
@@ -170,6 +172,7 @@ export const NFTCreatorForm = () => {
       }
       
       setMintStatus(`Error: ${errorMessage}`);
+      showErrorToast(errorMessage);
       setLoading(false);
     }
   };
@@ -219,7 +222,7 @@ export const NFTCreatorForm = () => {
       <Button
         type="submit"
         disabled={loading || !connected}
-        className="w-full py-2.5 bg-purple-600 hover:bg-purple-700"
+        className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? (
           <span className="flex items-center justify-center">
